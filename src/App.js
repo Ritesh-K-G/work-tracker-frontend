@@ -1,110 +1,111 @@
-// Filename - App.js
-
-import React from "react";
-import { useState, useEffect } from "react";
-import axios from "axios";
-
-import "./App.css";
-import logo from "./sprinklr-logo.PNG";
-import Table from "./components/table";
-import loadingAnimation from "./Iphone-spinner-2.gif";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import Navigate instead of Redirect
+import './App.css';
+import './newApp.css';
+import Homepage from './homepage/Homepage';
 
 function App() {
-  const [managingPage, setManagingPage] = useState(true);
-  const [myManagingTasks, setMyManagingTasks] = useState([]);
-
-  const [assignedPage, setAssignedPage] = useState(false);
-  const [myAssignedTasks, setMyAssignedTasks] = useState([]);
-
-  const [isError, setIsError] = useState("");
-  const [isLoading, setLoading] = useState(true);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [signUpPage, setSignUpPage] = useState(false);
 
   useEffect(() => {
-    setTimeout(() => {
-      if (managingPage) {
-        axios.get("http://localhost:8080/api/getAssignedTasks?Id=6658616291ca5540b036e983")
-        .then((response) => {
-          setMyAssignedTasks(response.data);
-          setLoading(false);
-        })
-        .catch((error) => {
-          setIsError(error.message);
-          setLoading(false);
-        });
-      } else if (assignedPage) {
-        axios.get("http://localhost:8080/api/getManagingTasks?Id=6658614991ca5540b036e982")
-        .then((response) => {
-          setMyManagingTasks(response.data);
-          setLoading(false);
-        })
-        .catch((error) => {
-          setIsError(error.message);
-          setLoading(false);
-        });
-      }
-    }, 400)
-  }, [managingPage, assignedPage]);
+    const user = sessionStorage.getItem('user');
+    if (!user) {
+      setLoggedIn(true);
+    }
+  }, []);
 
-  const assignedPageClick = (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
-    setLoading(true);
-    setAssignedPage(true);
-    setManagingPage(false);
-  };
-  const managingPageClick = (event) => {
-    event.preventDefault();
-    setLoading(true);
-    setAssignedPage(false);
-    setManagingPage(true);
+    // Simulate authentication
+    if (username === 'user' && password === 'password') {
+      sessionStorage.setItem('user', username);
+      setLoggedIn(true);
+    } else {
+      alert('Invalid username or password');
+    }
   };
 
+  const handlePageChange = (event) => {
+    event.preventDefault();
+    setSignUpPage(!signUpPage);
+  };
 
-	return (
-		<div>
-			<nav class="navbar background">
-				<ul class="nav-list">
-					<div class="logo">
-						<img src={logo} style={{width: '50px', height: 'auto'}} />
-            <p>
-              Work Tracker
-            </p>
-					</div>
-          <li>
-            <a href="#" onClick={assignedPageClick}>
-              My Assigned Tasks
-            </a>
-          </li>
-          <li>
-            <a href="#" onClick={managingPageClick}>
-              My Managing Tasks
-            </a>
-          </li>
-				</ul>
-				<div class="rightNav">
-          <button class="btn btn-lg">
-            Create Task
-          </button>
-					<button class="btn btn-sm">
-						LogOut
-					</button>
-				</div>
-			</nav>
-      <div>
+  return (
+    loggedIn
+      ? <Homepage />
+      : signUpPage
+        ? <div className="App">
+          <header className="App-header">
+            <div className="login-box">
+              <h2>Sign Up</h2>
+              <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <label htmlFor="username">Username:</label>
+                  <input
+                    type="text"
+                    id="username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="password">Password:</label>
+                  <input
+                    type="password"
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <button type="submit">Login</button>
+                </div>
+              </form>
 
-      </div>
-      <div class="My-content">
-        {
-          isLoading 
-          ? <img src={loadingAnimation} />
-          : isError !== "" 
-              ? <h2>{isError}</h2>
-              : managingPage
-                ? <Table data={myManagingTasks}/>
-                : <Table data={myAssignedTasks}/>
-        }
-      </div>
-		</div>
-	);
+              <p>Already have an account? <a href="#" onClick={handlePageChange}>Log in</a></p>
+            </div>
+          </header>
+        </div>
+        : <div className="App">
+          <header className="App-header">
+            <div className="login-box">
+              <h2>Login</h2>
+              <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <label htmlFor="username">Username:</label>
+                  <input
+                    type="text"
+                    id="username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="password">Password:</label>
+                  <input
+                    type="password"
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <button type="submit">Login</button>
+                </div>
+              </form>
+              <p>Don't have an account? <a href="#" onClick={handlePageChange}>Sign Up</a></p>
+            </div>
+          </header>
+        </div>
+
+  );
 }
 
 export default App;
