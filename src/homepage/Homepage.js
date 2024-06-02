@@ -19,6 +19,11 @@ function Homepage() {
   const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
+    const user_id = localStorage.getItem("id");
+    if (!user_id) {
+      localStorage.clear();
+      window.location.reload();
+    }
     setTimeout(() => {
       setLoading(true);
       if (managingPage) {
@@ -57,6 +62,12 @@ function Homepage() {
     setManagingPage(true);
   };
 
+  const logoutClick = (event) => {
+    event.preventDefault();
+    localStorage.clear();
+    window.location.reload();
+  };
+
 
   return (
     <div>
@@ -81,9 +92,9 @@ function Homepage() {
         </ul>
         <div class="rightNav">
           <button class="btn btn-lg">
-            Create Task
+            Task +
           </button>
-          <button class="btn btn-sm">
+          <button class="btn btn-sm" onClick={logoutClick}>
             LogOut
           </button>
         </div>
