@@ -3,6 +3,7 @@ import './ProjectDetailsComponent.css';
 import EditJobDetails from './EditJobDetails.js';
 import axios from 'axios';
 import CommentList from './comments.js';
+import ShowChart from './showChart.js';
 
 const ProjectDetailsComponent = ({ project }) => {
   const [status, setStatus] = useState(project.status);
@@ -98,6 +99,7 @@ const ProjectDetailsComponent = ({ project }) => {
     editProjectPage
       ? <EditJobDetails job={project} />
       : <div className="project-details">
+          <ShowChart rawData={project.updatesTimeline}/>
           <h1>{project.title}</h1>
           <p><strong>Description:</strong> {project.description}</p>
           <p><strong>Manager:</strong> {project.managerName}</p>

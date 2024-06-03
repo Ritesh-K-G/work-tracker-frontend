@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
+import CryptoJS from 'crypto-js';
 
 import './App.css';
 import './newApp.css';
 import Homepage from './homepage/Homepage';
+import { hash } from 'bcryptjs';
 
 function App() {
   const [username, setUsername] = useState('');
@@ -40,7 +42,7 @@ function App() {
         'id': '',
         'name': name,
         'email': username,
-        'password': password,
+        'password': CryptoJS.SHA256(password).toString(),
         'designation': role
       }
     ).then((response) => {
@@ -54,7 +56,7 @@ function App() {
 
   const loginSubmit = (event) => {
     event.preventDefault();
-    axios.get("http://localhost:8080/api/validate?email=" + email + "&password=" + loginPassword)
+    axios.get("http://localhost:8080/api/validate?email=" + email + "&password=" + CryptoJS.SHA256(loginPassword).toString())
     .then((response) => {
           localStorage.setItem("id", response.data);
           setLoggedIn(true);
@@ -73,7 +75,7 @@ function App() {
             <div className="login-box">
               <h2>Sign Up</h2>
               <form onSubmit={handleSubmit}>
-                <div className='form-group'>
+                <div className='myLabels'>
                   <label htmlFor='name'>Name:</label>
                   <input
                     type='text'
@@ -83,7 +85,7 @@ function App() {
                     required
                   />
                 </div>
-                <div className="form-group">
+                <div className="myLabels">
                   <label htmlFor="username">Username:</label>
                   <input
                     type="email"
@@ -93,7 +95,7 @@ function App() {
                     required
                   />
                 </div>
-                <div className="form-group">
+                <div className="myLabels">
                   <label htmlFor="password">Password:</label>
                   <input
                     type="password"
@@ -103,14 +105,14 @@ function App() {
                     required
                   />
                 </div>
-                <div className="form-group">
+                <div className="myLabels">
                   <label htmlFor='role'>Designation:</label>
                   <select id="dropdown" value={role} onChange={handleRoleChange}>
                     <option value="INTERN">Intern</option>
                     <option value="MANAGER">Manager</option>
                   </select>
                 </div>
-                <div className="form-group">
+                <div className="">
                   <button type="submit">Sign Up</button>
                 </div>
               </form>
@@ -124,7 +126,7 @@ function App() {
             <div className="login-box">
               <h2>Login</h2>
               <form onSubmit={loginSubmit}>
-                <div className="form-group">
+                <div className="myLabels">
                   <label htmlFor="email">Email:</label>
                   <input
                     type="email"
@@ -134,7 +136,7 @@ function App() {
                     required
                     />
                 </div>
-                <div className="form-group">
+                <div className="myLabels">
                   <label htmlFor="password">Password:</label>
                   <input
                     type="password"
@@ -144,7 +146,7 @@ function App() {
                     required
                     />
                 </div>
-                <div className="form-group">
+                <div className="">
                   <button type="submit">Login</button>
                 </div>
               </form>

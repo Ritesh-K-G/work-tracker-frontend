@@ -60,3 +60,8 @@ button {
 button:hover {
   background-color: #005f8c; /* Darker blue on hover */
 }
+
+.myLabels {
+  text-align: left;
+  margin-bottom: 15px;
+}
