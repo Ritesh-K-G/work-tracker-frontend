@@ -53,20 +53,43 @@ function Homepage() {
     }
   }, [managingPage, assignedPage]);
 
+  var fetchData = () => {
+      axios.get("http://localhost:8080/api/getAssignedTasks?Id=" + localStorage.getItem('id'))
+        .then((response) => {
+          setLoading(false);
+          setMyAssignedTasks(response.data);
+        })
+        .catch((error) => {
+          setLoading(false);
+          setIsError(error.message);
+        });
+
+      axios.get("http://localhost:8080/api/getManagingTasks?Id=" + localStorage.getItem('id'))
+        .then((response) => {
+          setLoading(false);
+          setMyManagingTasks(response.data);
+        })
+        .catch((error) => {
+          setLoading(false);
+          setIsError(error.message);
+        });
+    
+  };
+
   const assignedPageClick = (event) => {
-    setAssignedPage(false);
+    event.preventDefault();
+    fetchData();
+    setAssignedPage(true);
     setCreateTask(false);
     setManagingPage(false);
-    // event.preventDefault();
-    setAssignedPage(true);
   };
 
   const managingPageClick = (event) => {
+    event.preventDefault();
+    fetchData();
+    setManagingPage(true);
     setAssignedPage(false);
     setCreateTask(false);
-    setManagingPage(false);
-    // event.preventDefault();
-    setManagingPage(true);
   };
 
   const logoutClick = (event) => {
@@ -80,11 +103,11 @@ function Homepage() {
   };
 
   const createTaskClick = (event) => {
-    setAssignedPage(false);
-    setCreateTask(false);
-    setManagingPage(false);
-    // event.preventDefault();
+    event.preventDefault();
     setCreateTask(true);
+    setLoading(false);
+    setAssignedPage(false);
+    setManagingPage(false);
   };
 
   return (
@@ -119,17 +142,11 @@ function Homepage() {
       </nav>
       <div class="My-content">
         {/* {assignedPage == false && managingPage == false && isLoading == true && <img src={sprinklr_animation}/>} */}
-        {
-          createTask
-            ? <CreateJobForm/> 
-            : isLoading
-                ? <img src={sprinklr_animation} />
-                : isError !== ""
-                  ? <h2>{isError}</h2>
-                  : managingPage
-                    ? <Table data={myManagingTasks} />
-                    : <Table data={myAssignedTasks} />
-        }
+          {createTask==true && <CreateJobForm/>} 
+          {isLoading==true && <img src={sprinklr_animation} />}
+          {isError !== "" && <h2>{isError}</h2>}
+          {managingPage && <Table data={myManagingTasks} />}
+          {assignedPage && <Table data={myAssignedTasks} />}
       </div>
     </div>
   );

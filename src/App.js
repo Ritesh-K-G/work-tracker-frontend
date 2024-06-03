@@ -86,7 +86,7 @@ function App() {
                   />
                 </div>
                 <div className="myLabels">
-                  <label htmlFor="username">Username:</label>
+                  <label htmlFor="username">Email:</label>
                   <input
                     type="email"
                     id="username"

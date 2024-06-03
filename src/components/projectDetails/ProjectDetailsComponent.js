@@ -94,12 +94,21 @@ const ProjectDetailsComponent = ({ project }) => {
     setNewComment('');
   };
 
+  const reassign = () => {
+    axios.put('http://localhost:8080/api/reassign?id=' + project.id)
+      .then((response) => {
+        alert("Project Reassigned to the collaborators");
+        window.location.reload();
+      })
+      .catch((error) => {
+        alert("Some error occured, "+ error.message);
+      })
+  };
 
   return (
     editProjectPage
       ? <EditJobDetails job={project} />
       : <div className="project-details">
-          <ShowChart rawData={project.updatesTimeline}/>
           <h1>{project.title}</h1>
           <p><strong>Description:</strong> {project.description}</p>
           <p><strong>Manager:</strong> {project.managerName}</p>
@@ -113,8 +122,10 @@ const ProjectDetailsComponent = ({ project }) => {
           <p><strong>Deadline:</strong> {new Date(project.deadline).toLocaleDateString()}</p>
           <p><strong>Last Update:</strong> {timeAgo(project.lastStatusUpdateOn)}</p>
           <p><strong>Completion Time:</strong> {project.completedOn ? new Date(project.completedOn).toLocaleString() : 'Not completed yet'}</p>
+          <ShowChart rawData={project.updatesTimeline}/>
           {project.managerId !== userId && project.status != "COMPLETED" && <button onClick={() => handleUpdateStatus(project)}>Update Status</button>}
-          {project.managerId == userId && project.status == "COMPLETED" && <button onClick={() => handleUpdateStatus(project)}>Update Status</button>}
+          {project.managerId == userId && project.status == "COMPLETED" && <button onClick={() => handleUpdateStatus(project)}>Accept Project</button>}
+          {project.managerId == userId && project.status == "COMPLETED" && <button style={{backgroundColor: 'red'}} onClick={() => reassign()}>Reassign Project</button>}
           {project.managerId == userId && project.status != "ACCEPTED" && <button onClick={() => editProjectClick(project)}>Edit Project Details</button>}
           <div>
             <CommentList comments={commentList}/>
