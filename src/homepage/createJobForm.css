@@ -1,0 +1,46 @@
+/* CreateJobForm.css */
+.myForm {
+  max-width: 80vh;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+input, textarea, select {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.collaborator-box {
+  border: 1px solid #ccc;
+  padding: 10px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: blue;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: darkblue;
+}
+
+.myBox {
+  width: 50vh;
+}

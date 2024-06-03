@@ -7,6 +7,7 @@ import logo from "../sprinklr-logo.PNG";
 import Table from "../components/table";
 import loadingAnimation from "../Iphone-spinner-2.gif";
 import sprinklr_animation from "../sprinklr-animated.gif";
+import CreateJobForm from "./createJobForm";
 
 function Homepage() {
   const [managingPage, setManagingPage] = useState(false);
@@ -18,42 +19,45 @@ function Homepage() {
   const [isError, setIsError] = useState("");
   const [isLoading, setLoading] = useState(true);
 
+  const [createTask, setCreateTask] = useState(false);
+
   useEffect(() => {
     const user_id = localStorage.getItem("id");
     if (!user_id) {
       localStorage.clear();
       window.location.reload();
     }
-    setTimeout(() => {
-      setLoading(true);
-      if (managingPage) {
-        axios.get("http://localhost:8080/api/getAssignedTasks?Id=6658616291ca5540b036e983")
-          .then((response) => {
-            setMyAssignedTasks(response.data);
-            setLoading(false);
-          })
-          .catch((error) => {
-            setIsError(error.message);
-            setLoading(false);
-          });
-      } else {
-        axios.get("http://localhost:8080/api/getManagingTasks?Id=6658614991ca5540b036e982")
-          .then((response) => {
-            setMyManagingTasks(response.data);
-            setLoading(false);
-          })
-          .catch((error) => {
-            setIsError(error.message);
-            setLoading(false);
-          });
-      }
-    }, 400)
+    if (createTask) {
+      setCreateTask(false);
+    }
+    setLoading(true);
+    if (managingPage) {
+      axios.get("http://localhost:8080/api/getAssignedTasks?Id=" + user_id)
+        .then((response) => {
+          setLoading(false);
+          setMyAssignedTasks(response.data);
+        })
+        .catch((error) => {
+          setLoading(false);
+          setIsError(error.message);
+        });
+    } else if (assignedPage) {
+      axios.get("http://localhost:8080/api/getManagingTasks?Id=" + user_id)
+        .then((response) => {
+          setLoading(false);
+          setMyManagingTasks(response.data);
+        })
+        .catch((error) => {
+          setLoading(false);
+          setIsError(error.message);
+        });
+    }
   }, [managingPage, assignedPage]);
 
   const assignedPageClick = (event) => {
     event.preventDefault();
-    setAssignedPage(true);
     setManagingPage(false);
+    setAssignedPage(true);
   };
 
   const managingPageClick = (event) => {
@@ -68,12 +72,19 @@ function Homepage() {
     window.location.reload();
   };
 
+  const homepageClick = (event) => {
+    window.location.reload();
+  };
+
+  const createTaskClick = (event) => {
+    setCreateTask(true);
+  };
 
   return (
     <div>
       <nav class="navbar background">
         <ul class="nav-list">
-          <div class="logo">
+          <div class="logo" onClick={homepageClick}>
             <img src={logo} style={{ width: '50px', height: 'auto' }} />
             <p>
               Work Tracker
@@ -81,18 +92,18 @@ function Homepage() {
           </div>
           <li>
             <a href="#" onClick={assignedPageClick}>
-              My Assigned Tasks
+              Assigned Tasks
             </a>
           </li>
           <li>
             <a href="#" onClick={managingPageClick}>
-              My Managing Tasks
+              Managing Tasks
             </a>
           </li>
         </ul>
         <div class="rightNav">
-          <button class="btn btn-lg">
-            Task +
+          <button class="btn" onClick={createTaskClick}>
+            Task+
           </button>
           <button class="btn btn-sm" onClick={logoutClick}>
             LogOut
@@ -100,15 +111,17 @@ function Homepage() {
         </div>
       </nav>
       <div class="My-content">
-        {managingPage == false && assignedPage == false && isLoading == false && <img src={sprinklr_animation}/>}
+        {/* {assignedPage == false && managingPage == false && isLoading == true && <img src={sprinklr_animation}/>} */}
         {
-          isLoading
-            ? <img src={loadingAnimation} />
-            : isError !== ""
-              ? <h2>{isError}</h2>
-              : managingPage
-                ? <Table data={myManagingTasks} />
-                : <Table data={myAssignedTasks} />
+          createTask
+            ? <CreateJobForm/> 
+            : isLoading
+                ? <img src={sprinklr_animation} />
+                : isError !== ""
+                  ? <h2>{isError}</h2>
+                  : managingPage
+                    ? <Table data={myManagingTasks} />
+                    : <Table data={myAssignedTasks} />
         }
       </div>
     </div>

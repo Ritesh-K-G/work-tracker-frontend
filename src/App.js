@@ -44,9 +44,11 @@ function App() {
         'designation': role
       }
     ).then((response) => {
-      alert("User Created, kindly login")
+      alert("User Created, kindly login");
+      window.location.reload();
     }).catch((error) => {
-      alert("Cannot signup. " + error.message);
+      alert("Cannot signup. Try signing up ith different account, " + error.message);
+      window.location.reload();
     });
   };
 
