@@ -11,6 +11,7 @@ import {
     Legend,
     TimeScale
 } from 'chart.js';
+import 'chartjs-adapter-date-fns';
 
 // Register the components with Chart.js
 ChartJS.register(
@@ -28,12 +29,9 @@ const ShowChart = ({ rawData }) => {
     const labels = rawData.map(item => item.first);
     const dates = rawData.map(item => new Date(item.second));
 
-    // Determine the min and max dates for the y-axis
-    const minDate = Math.min(...dates);
-    const maxDate = Math.max(...dates);
+    const minDate = new Date(Math.min(...dates));
+    const maxDate = new Date(Math.max(...dates));
 
-    console.log(labels);
-    console.log(dates);
     const data = {
         labels: labels,
         datasets: [
@@ -43,8 +41,7 @@ const ShowChart = ({ rawData }) => {
                 backgroundColor: 'transparent',
                 borderColor: '#f26c6d',
                 pointBorderColor: 'transparent',
-                pointBorderWidth: 4,
-                tension: 0.5
+                pointBorderWidth: 4
             }
         ]
     };
@@ -63,11 +60,11 @@ const ShowChart = ({ rawData }) => {
                 }
             },
             y: {
-                // type: 'time',
-    //             time: {
-    //                 unit: 'day',
-    //                 tooltipFormat: 'PP',
-    //             },
+                type: 'time',
+                time: {
+                    unit: 'day',
+                    tooltipFormat: 'PP',
+                },
                 min: minDate,
                 max: maxDate,
                 grid: {
@@ -79,7 +76,7 @@ const ShowChart = ({ rawData }) => {
 
     return (
         <div>
-            <Line data={data} options={options}/>
+            <Line data={data} options={options} />
         </div>
     );
 };
