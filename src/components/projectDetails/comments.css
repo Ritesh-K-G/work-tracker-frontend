@@ -1,0 +1,26 @@
+.comment-container {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .comment {
+    margin-bottom: 20px;
+    border-radius: 10px;
+    background-color: #fff;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .commentator {
+    font-weight: bold;
+  }
+  
+  .comment-text {
+    margin-top: 5px;
+  }
+  
+  .comment-time {
+    font-size: 0.8rem;
+    color: #888;
+  }
+  

@@ -91,6 +91,7 @@ const CreateJobForm = () => {
           searchBy='name'
           searchable="true"
           placeholder="Search and select collaborators"
+          required
         />
       </div>
       <button type="submit">Create Job</button>

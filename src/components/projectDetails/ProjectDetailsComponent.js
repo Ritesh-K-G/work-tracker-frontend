@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import './ProjectDetailsComponent.css';
+import EditJobDetails from './EditJobDetails.js';
 import axios from 'axios';
+import CommentList from './comments.js';
 
 const ProjectDetailsComponent = ({ project }) => {
   const [status, setStatus] = useState(project.status);
   const [userId, setUserId] = useState('');
+  const [editProjectPage, setEditProjectPage] = useState(false);
+  const [commentList, setCommentList] = useState(project.commentList);
 
   useEffect(() => {
     const user = localStorage.getItem('id');
@@ -56,24 +60,73 @@ const ProjectDetailsComponent = ({ project }) => {
       });
   };
 
+  const editProjectClick = (obj) => {
+    setEditProjectPage(true);
+  }
+
+  const [newComment, setNewComment] = useState('');
+
+  const handleInputChange = (e) => {
+    setNewComment(e.target.value);
+  };
+
+  const handleAddComment = () => {
+    const newCommentObj = {
+      "taskId": project.id,
+      "commentatorName": 'Me',
+      "comment": newComment
+    };
+    const commentObj = {
+      "commentatorName": 'Me',
+      "time": new Date(),
+      "comment": newComment
+    };
+    axios.post('http://localhost:8080/api/addComment?id=' + localStorage.getItem('id'), newCommentObj)
+      .then(() => {
+        const updatedCommentList = [...commentList, commentObj];
+        setCommentList(updatedCommentList);
+      })
+      .catch((error) => {
+        alert('Comment cannot be added');
+      })
+    console.log('New comment:', newComment);
+    setNewComment('');
+  };
+
+
   return (
-    <div className="project-details">
-      <h1>{project.title}</h1>
-      <p><strong>Description:</strong> {project.description}</p>
-      <p><strong>Manager:</strong> {project.managerName}</p>
-      <p><strong>Collaborators:</strong></p>
-      <ul>
-        {project.collaboratorNames.map((collaborator, index) => (
-          <li key={index}>{collaborator}</li>
-        ))}
-      </ul>
-      <p><strong>Assigning Date:</strong> {new Date(project.assignedOn).toLocaleDateString()}</p>
-      <p><strong>Deadline:</strong> {new Date(project.deadline).toLocaleDateString()}</p>
-      <p><strong>Last Update:</strong> {timeAgo(project.lastStatusUpdateOn)}</p>
-      <p><strong>Completion Time:</strong> {project.completedOn ? new Date(project.completedOn).toLocaleString() : 'Not completed yet'}</p>
-      {project.managerId !== userId && project.status != "COMPLETED" && <button onClick={() => handleUpdateStatus(project)}>Update Status</button>}
-      {project.managerId == userId && project.status == "COMPLETED" && <button onClick={() => handleUpdateStatus(project)}>Update Status</button>}
-    </div>
+    editProjectPage
+      ? <EditJobDetails job={project} />
+      : <div className="project-details">
+          <h1>{project.title}</h1>
+          <p><strong>Description:</strong> {project.description}</p>
+          <p><strong>Manager:</strong> {project.managerName}</p>
+          <p><strong>Collaborators:</strong></p>
+          <ul>
+            {project.collaboratorNames.map((collaborator, index) => (
+              <li key={index}>{collaborator}</li>
+            ))}
+          </ul>
+          <p><strong>Assigning Date:</strong> {new Date(project.assignedOn).toLocaleDateString()}</p>
+          <p><strong>Deadline:</strong> {new Date(project.deadline).toLocaleDateString()}</p>
+          <p><strong>Last Update:</strong> {timeAgo(project.lastStatusUpdateOn)}</p>
+          <p><strong>Completion Time:</strong> {project.completedOn ? new Date(project.completedOn).toLocaleString() : 'Not completed yet'}</p>
+          {project.managerId !== userId && project.status != "COMPLETED" && <button onClick={() => handleUpdateStatus(project)}>Update Status</button>}
+          {project.managerId == userId && project.status == "COMPLETED" && <button onClick={() => handleUpdateStatus(project)}>Update Status</button>}
+          {project.managerId == userId && project.status != "ACCEPTED" && <button onClick={() => editProjectClick(project)}>Edit Project Details</button>}
+          <div>
+            <CommentList comments={commentList}/>
+          </div>
+          <div className="add-comment">
+            <input
+              type="text"
+              placeholder="Add a comment..."
+              value={newComment}
+              onChange={handleInputChange}
+            />
+            <button onClick={handleAddComment}>Add Comment</button>
+          </div>
+        </div>
   );
 };
 

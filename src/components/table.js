@@ -24,6 +24,10 @@ const getStatusStyle = (status) => {
   }
 };
 
+const editStyle = {
+  backgroundColor: 'grey'
+};
+
 const formatDateTime = (timestamp) => {
   const date = new Date(timestamp);
   const formattedDate = new Intl.DateTimeFormat('en-US', { dateStyle: 'full' }).format(date);
@@ -91,7 +95,7 @@ const Table = (props) => {
               <tr>
                 <th>S. No.</th>
                 <th className='expand'>Title</th>
-                <th className='expand'>Assignee</th>
+                <th className='expand'>Manager</th>
                 <th>Deadline</th>
                 <th>Status</th>
                 <th className='expand'>Last Update</th>
@@ -103,7 +107,10 @@ const Table = (props) => {
                 data.map((obj, index) => (
                   <tr key={index}>
                     <td>{index + 1}</td>
-                    <td>{obj.title}</td>
+                    <td>
+                      {obj.title}&nbsp;
+                      {obj.edited && <span className={`label`} style={editStyle}>Edited</span>}
+                    </td>
                     <td>{obj.managerName}</td>
                     <td>{formatDateTime(obj.deadline)}</td>
                     <td>

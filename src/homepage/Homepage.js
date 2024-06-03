@@ -30,7 +30,6 @@ function Homepage() {
     if (createTask) {
       setCreateTask(false);
     }
-    setLoading(true);
     if (managingPage) {
       axios.get("http://localhost:8080/api/getAssignedTasks?Id=" + user_id)
         .then((response) => {
@@ -55,14 +54,18 @@ function Homepage() {
   }, [managingPage, assignedPage]);
 
   const assignedPageClick = (event) => {
-    event.preventDefault();
+    setAssignedPage(false);
+    setCreateTask(false);
     setManagingPage(false);
+    // event.preventDefault();
     setAssignedPage(true);
   };
 
   const managingPageClick = (event) => {
-    event.preventDefault();
     setAssignedPage(false);
+    setCreateTask(false);
+    setManagingPage(false);
+    // event.preventDefault();
     setManagingPage(true);
   };
 
@@ -77,6 +80,10 @@ function Homepage() {
   };
 
   const createTaskClick = (event) => {
+    setAssignedPage(false);
+    setCreateTask(false);
+    setManagingPage(false);
+    // event.preventDefault();
     setCreateTask(true);
   };
 
